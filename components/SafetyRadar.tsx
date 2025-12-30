@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SafetyStatus } from '../types';
+import { SafetyStatus } from '../types.ts';
 import { ShieldCheck, ShieldAlert, ShieldX } from 'lucide-react';
 
 interface SafetyRadarProps {

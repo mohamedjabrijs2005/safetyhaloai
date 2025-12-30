@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { RoomContext, GeminiSafetyReport, SafetyStatus } from "../types";
+import { RoomContext, GeminiSafetyReport, SafetyStatus } from "../types.ts";
 
 const SYSTEM_INSTRUCTION = `
 You are an AI Context-Aware Safety Assistant for hostel rooms, homes, and PGs.
@@ -14,7 +14,8 @@ Keep answers short (3–6 sentences) and non-technical.
 `;
 
 export async function analyzeSafetyContext(context: RoomContext): Promise<GeminiSafetyReport> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+  // Initialize AI client per-request to ensure the latest API key is used
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
     const response = await ai.models.generateContent({
