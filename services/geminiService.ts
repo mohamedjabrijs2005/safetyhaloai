@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { RoomContext, GeminiSafetyReport, SafetyStatus } from "../types.ts";
 
@@ -14,8 +13,20 @@ Keep answers short (3–6 sentences) and non-technical.
 `;
 
 export async function analyzeSafetyContext(context: RoomContext): Promise<GeminiSafetyReport> {
+  const apiKey = process.env.API_KEY;
+  
+  if (!apiKey) {
+    console.warn("SafetyHalo: API_KEY is missing. AI analysis will be limited.");
+    return {
+      status: SafetyStatus.SAFE,
+      summary: "AI analysis is currently unavailable (Missing API Key). Monitoring sensors locally.",
+      actions_for_user: ["Manual observation recommended."],
+      actions_for_warden: ["Check system configuration."]
+    };
+  }
+
   // Initialize AI client per-request to ensure the latest API key is used
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey });
   
   try {
     const response = await ai.models.generateContent({
@@ -45,7 +56,10 @@ export async function analyzeSafetyContext(context: RoomContext): Promise<Gemini
       }
     });
 
-    const data = JSON.parse(response.text || "{}");
+    const text = response.text;
+    if (!text) throw new Error("Empty response from Gemini");
+    
+    const data = JSON.parse(text);
     return {
       status: data.status as SafetyStatus || SafetyStatus.SAFE,
       summary: data.summary || "No analysis available.",
