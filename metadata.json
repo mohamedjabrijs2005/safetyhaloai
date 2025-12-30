@@ -1,0 +1,7 @@
+{
+  "name": "SafetyHalo AI",
+  "description": "An AI-powered contextual safety monitoring system for homes and PGs, using Gemini to analyze sensor data and provide real-time safety explanations.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
